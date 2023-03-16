@@ -11,16 +11,15 @@ export default defineEventHandler(async (event) => {
     const { spotifyClientID, spotifyRedirect } = useRuntimeConfig();
     const state = getRandomString(16);
     const scope = 'user-read-private user-read-email';
-
-
-    return sendRedirect(event, 'https://accounts.spotify.com/authorize?' +
+    const returnUrl = ('https://accounts.spotify.com/authorize?' +
     new URLSearchParams({
       response_type: 'code',
       client_id: spotifyClientID,
       scope: scope,
       redirect_uri: spotifyRedirect,
       state: state
-    })
-    )
+    }))
+    console.log("hi")    
+    return sendRedirect(event, returnUrl, 307);
 
 })
