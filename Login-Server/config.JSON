@@ -1,0 +1,7 @@
+{
+    "dbURL": "mongodb+srv://CanSatPro:aKVhmAt4CG6aLPDf@cansatpro.3e0vzzi.mongodb.net/?retryWrites=true&w=majority",
+    "SPOTIFY_CLIENT_ID": "a930b112b2374b00884e8073278f0346",
+    "SPOTIFY_CLINT_SECRET": "8419e66b93e74d7c8153e9026672c46d",
+    "spotify_redirect_uri": "http://localhost:8888/spotifycallback"
+
+}
