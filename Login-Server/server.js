@@ -11,7 +11,7 @@ app.get('/spotifylogin', function(req, res) {
   var scope = 'user-read-private user-read-email';
 
   res.redirect('https://accounts.spotify.com/authorize?' +
-    querystring.stringify({
+  URLSearchParams({
       response_type: 'code',
       client_id: CONFIG.SPOTIFY_CLIENT_ID,
       scope: scope,

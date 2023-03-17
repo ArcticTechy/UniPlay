@@ -1,6 +1,5 @@
 <template>
     <head>
-        
     </head>
     
     <div>
@@ -10,13 +9,11 @@
 
 
 <script setup lang="ts">
-    
+    console.log(useCookie('spotify_access_token'))
 
     const router = useRouter();
     const LoginSpotify = () => window.location.href = "/api/spotify/login";
-    
- 
- 
-  
+    const spotifyToken = useCookie('spotify_access_token')
+
 </script>
   

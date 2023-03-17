@@ -1,5 +1,6 @@
 <template lang="">
     <div>
+        
     </div>
 </template>
 
@@ -28,8 +29,8 @@
         const spotify_refresh_token = useCookie('spotify_refresh_token', {
             maxAge: tokens.value.expires_in 
         });
-        const spotify_expires_in = useCookie('spotify_expires_in',{
-            maxAge: tokens.value.expires_in
+        const spotify_expires_in = useCookie('spotify_expires_in',{ 
+            maxAge: tokens.value.expires_in 
         });
         spotify_access_token.value = tokens.value.access_token;
         spotify_refresh_token.value = tokens.value.refresh_token;
