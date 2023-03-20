@@ -10,7 +10,6 @@ export default defineNuxtConfig({
         '/index': { ssr: false },
     },
     plugins: [
-        '~/plugins/spotifyplayer.client.js'
       ],
     nitro: {
         routeRules: {

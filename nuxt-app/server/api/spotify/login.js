@@ -1,3 +1,4 @@
+// laver en string med tilfældige tegn fra charset arrayet i den længde som brugeren vælger. 
 function getRandomString(length) {
     var charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     var result = "";
