@@ -1,8 +1,10 @@
+//load the spotify playbacksdk by adding it to the headtag
 const script = document.createElement("script");
 script.src = "https://sdk.scdn.co/spotify-player.js";
 document.body.appendChild(script);
-
+// uses the defineNuxtPlugin funktion from Nuxt to create the plugin and allow us to control it using useNuxtApp();
 export default defineNuxtPlugin(nuxtApp => {
+  //making values outside the of the onSpotifyWebPlaybackSDKReady to export values from it
   const spotifyPlayer = ref();
   const currentTrack = ref({
     uri: "", // Spotify URI
@@ -22,12 +24,15 @@ export default defineNuxtPlugin(nuxtApp => {
       { uri: '', name: "" }
     ]
   });
-
+  const Position = ref("")
+  const Duration = ref("")
+  const Paused = ref("")
+// Runs once the Spotify SDK is loaded
   window.onSpotifyWebPlaybackSDKReady = () => {
-  // Get spotify_access_token cookie
+  // Get spotify_access_token cookie that we made in /callback/[platform](Spotify)
   const token = useCookie('spotify_access_token')
 
-  // Check if cookie exists
+  // Check if cookie exists and creates a spotify player if that is the case
   if (token.value) {
     spotifyPlayer.value = new Spotify.Player({
       name: 'UniPlay',
@@ -36,39 +41,53 @@ export default defineNuxtPlugin(nuxtApp => {
     });
 
     // Add event listeners
+    // logs in the that the playback device is ready when it is togther with its id
     spotifyPlayer.value.addListener('ready', ({ device_id }) => {
       console.log('Ready with Device ID', device_id);
     });
-
+    /* Gives us values for Paused, posistion, duration, and track info when the play changes state
+       changing state mean volume, play/pause, new track and so on  */
     spotifyPlayer.value.addListener('player_state_changed', ({
+      paused,
       position,
       duration,
       track_window: { current_track }
     }) => {
-      console.log('Currently Playing', current_track);
-      currentTrack.value = current_track,
-      console.log('Position in Song', position);
-      console.log('Duration of Song', duration);
+      /* pass the info from the state change to us trough the values we made earlier since we are otherwish unable to
+         get the values out */
+      Paused.value = paused;
+      currentTrack.value = current_track;
+      Position.value = position;
+      Duration.value = duration;
     });
 
-    // TODO: Add more event listeners
+    // TODO: Add more event listeners !!!
 
     // Connect player
     spotifyPlayer.value.connect();
   };
 }
-
+    // creates functions that runs once we call the provided values since we cant call it directly in the object
     const togglePlay = () => {spotifyPlayer.value.togglePlay()}
     const previousTrack = () => {spotifyPlayer.value.previousTrack()}
     const nextTrack = () => {spotifyPlayer.value.nextTrack()}
-    // Return player object
+    const setVolume = (volume) => {spotifyPlayer.value.setVolume(volume)}
+    const seek = (position) => {spotifyPlayer.value.seek(position)}
+
+    // Return all the exposed funktions and values, we use computed on values that need to be update
+    // like position as otherwish they wont update in the app.
     return {
       provide: {
         spotifyPlayer: {
           togglePlay: () => togglePlay(),
           nextTrack: () => nextTrack(),
           previousTrack: () => previousTrack(),
-          current_track: computed(() => currentTrack.value)
+          setVolume: (volume) => setVolume(volume),
+          seek: (position) => seek(position),
+          current_track: computed(() => currentTrack.value),
+          position: computed(() => Position.value),
+          duration: computed(() => Duration.value),
+          paused: computed(() => Paused.value),
         }
       }
     }
