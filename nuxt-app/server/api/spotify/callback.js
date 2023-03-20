@@ -17,6 +17,8 @@ export default eventHandler(async (event) => {
         })
       };
 
+      // husk tilføj state tjek så brugere ikke kan logge ind på andens konto ved en fejl.
+
    const GetToken = async() =>{
     return fetch('https://accounts.spotify.com/api/token', authOptions)
         .then(response => response.json())
