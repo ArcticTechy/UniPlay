@@ -49,6 +49,7 @@
       UpdaingPositionValue.value += $spotifyPlayer.paused.value ? 0 : 1000, 1000
       seekPosition.value = UpdaingPositionValue.value
     }, 1000)
+    
     // run when the user presses pause to play/pause
     function pause() {
       $spotifyPlayer.togglePlay()

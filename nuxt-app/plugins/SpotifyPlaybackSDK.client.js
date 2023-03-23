@@ -3,7 +3,7 @@ const script = document.createElement("script");
 script.src = "https://sdk.scdn.co/spotify-player.js";
 document.body.appendChild(script);
 // uses the defineNuxtPlugin funktion from Nuxt to create the plugin and allow us to control it using useNuxtApp();
-export default defineNuxtPlugin(nuxtApp => {
+export default defineNuxtPlugin( nuxtApp => {
   //making values outside the of the onSpotifyWebPlaybackSDKReady to export values from it
   const spotifyPlayer = ref();
   const currentTrack = ref({
@@ -27,7 +27,7 @@ export default defineNuxtPlugin(nuxtApp => {
   const Position = ref("")
   const Duration = ref("")
   const Paused = ref("")
-// Runs once the Spotify SDK is loaded
+  const provideNewToken = ref()
   window.onSpotifyWebPlaybackSDKReady = () => {
   // Get spotify_access_token cookie that we made in /callback/[platform](Spotify)
   const token = useCookie('spotify_access_token')
@@ -40,6 +40,13 @@ export default defineNuxtPlugin(nuxtApp => {
       volume: 0.5
     });
 
+    provideNewToken.value = (token) => {
+      spotifyPlayer.value = new Spotify.Player({
+        name: 'UniPlay',
+        getOAuthToken: cb => { cb(token.value); },
+        volume: 0.5
+      });
+    }
     // Add event listeners
     // logs in the that the playback device is ready when it is togther with its id
     spotifyPlayer.value.addListener('ready', ({ device_id }) => {
@@ -73,7 +80,7 @@ export default defineNuxtPlugin(nuxtApp => {
     const nextTrack = () => {spotifyPlayer.value.nextTrack()}
     const setVolume = (volume) => {spotifyPlayer.value.setVolume(volume)}
     const seek = (position) => {spotifyPlayer.value.seek(position)}
-
+    
     // Return all the exposed funktions and values, we use computed on values that need to be update
     // like position as otherwish they wont update in the app.
     return {
@@ -87,7 +94,7 @@ export default defineNuxtPlugin(nuxtApp => {
           current_track: computed(() => currentTrack.value),
           position: computed(() => Position.value),
           duration: computed(() => Duration.value),
-          paused: computed(() => Paused.value),
+          paused: computed(() => Paused.value)
         }
       }
     }
