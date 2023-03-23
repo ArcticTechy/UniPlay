@@ -5,8 +5,8 @@
     <div>
       <button @click="LoginSpotify"></button>
       <ClientOnly>
-
-        <SpotifyPlayback/>
+        <Player/>
+        <!--<SpotifyPlayback/>-->
       </ClientOnly>
       
     </div>
