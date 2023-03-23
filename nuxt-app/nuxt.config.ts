@@ -10,7 +10,6 @@ export default defineNuxtConfig({
     nitro: {
         routeRules: {
             'api/spotify/login' : { cors: true, headers: { 'access-control-allow-methods': 'GET' } },
-            
         }
       }
 })
