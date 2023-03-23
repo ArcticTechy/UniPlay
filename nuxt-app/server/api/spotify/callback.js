@@ -29,7 +29,6 @@ export default eventHandler(async (event) => {
     return fetch(spotifyTokenApiUrl, authOptions)
         .then(response => response.json())
         .then(data => {
-            console.log(data.access_token)
             return data
         }).catch(error => {
     console.error(error);
