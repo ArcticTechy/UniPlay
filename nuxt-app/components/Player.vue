@@ -9,8 +9,16 @@
                 <h1 Id="Title">{{ $spotifyPlayer.current_track.value.name }}</h1>
                 <div class="Song-Info">
                     <div>
-                    <NuxtLink class="artists" v-for="a in $spotifyPlayer.current_track.value.artists" to="/">{{ a.name }}</NuxtLink>
+                        <template v-for="(item, index) in $spotifyPlayer.current_track.value.artists">
+                            <NuxtLink class="artists" v-if="index == $spotifyPlayer.current_track.value.artists.length-1 " to="/">{{ item.name }} </NuxtLink>
+                            <NuxtLink class="artists" v-if="index != $spotifyPlayer.current_track.value.artists.length-1 " to="/">{{ item.name }}, </NuxtLink>
+                        </template>
                     </div>
+                </div>
+                <div class="controls">
+                    <button id="Prev" @click="$spotifyPlayer.previousTrack"></button>
+                    <button id="PlayPause" @click="$spotifyPlayer.togglePlay"></button>
+                    <button id="Next" @click="$spotifyPlayer.nextTrack"></button>
                 </div>
             </div>
                 <div id="progressAmount" class="Progressbar" v-bind:style="{width: playerProgressProcent + '%'}"></div>
@@ -133,12 +141,8 @@ import { InputObject } from 'untyped';
     display: inline-block;
     white-space: nowrap;
 }
-.Song-Info > div {
-    animation: marquee 25s linear infinite;
-    animation-play-state: paused;
-}
 .Song-Info:hover > div {
-    animation-play-state: running;
+    animation: marquee 25s linear infinite;
 }
 
 @keyframes marquee {
