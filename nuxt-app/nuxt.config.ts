@@ -7,6 +7,9 @@ export default defineNuxtConfig({
         spotifyClientSecret: process.env.SPOTIFY_CLIENT_SECRET,
         spotifyRedirect: process.env.SPOTIFY_REDIRECT
     },
+    plugins: [
+        '~/plugins/SpotifyPlaybackSDK.client.js'
+    ],
     nitro: {
         routeRules: {
             'api/spotify/login' : { cors: true, headers: { 'access-control-allow-methods': 'GET' } },
