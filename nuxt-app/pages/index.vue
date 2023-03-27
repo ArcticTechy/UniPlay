@@ -3,7 +3,7 @@
     </head>
     
     <div>
-      <button @click="LoginSpotify"></button>
+      <button @click="LoginSpotify">Login</button>
       <ClientOnly>
         <Player/>
         <!--<SpotifyPlayback/>-->
