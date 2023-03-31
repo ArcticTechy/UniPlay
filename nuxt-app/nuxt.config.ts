@@ -1,5 +1,3 @@
-import SpotifyPlaybackSDKClient from "./plugins/SpotifyPlaybackSDK.client";
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     runtimeConfig: {
@@ -14,5 +12,15 @@ export default defineNuxtConfig({
         routeRules: {
             'api/spotify/login' : { cors: true, headers: { 'access-control-allow-methods': 'GET' } },
         }
-      }
+      },
+    googleFonts: {
+        families: {
+            lora: true,
+            display: 'swap',
+
+        }
+    },
+    css: [
+        '@fortawesome/fontawesome-svg-core/styles.css'
+      ]
 })
