@@ -1,43 +1,72 @@
 <template>
     <div class="temp">
-        <div class="Player-box">
-            <div class="No-Overflow">
-                <div class="current-song-img-container">
-                    <img :src="$spotifyPlayer.current_track.value.album.images[0].url" />
-                </div>
-                <div class="Control">
-                    <h1 Id="Title">{{ $spotifyPlayer.current_track.value.name }}</h1>
-                    <div class="Song-Info">
-                        <div>
-                            <template v-for="(item, index) in $spotifyPlayer.current_track.value.artists">
-                                <NuxtLink class="artists"
-                                    v-if="index == $spotifyPlayer.current_track.value.artists.length - 1" to="/">{{
-                                        item.name
-                                    }} </NuxtLink>
-                                <NuxtLink class="artists"
-                                    v-if="index != $spotifyPlayer.current_track.value.artists.length - 1" to="/">{{
-                                        item.name
-                                    }}, </NuxtLink>
-                            </template>
-                        </div>
-                    </div>
-                    <div class="controls">
-                        <button id="Prev" @click="$spotifyPlayer.previousTrack"></button>
-                        <button id="PlayPause" @click="$spotifyPlayer.togglePlay"></button>
-                        <button id="Next" @click="$spotifyPlayer.nextTrack"></button>
+        <div class="Player-container">
+            <div class="left">
+                <img v-bind:src="$spotifyPlayer.current_track.value.album.images[0].url">
+                <div class="grid-stack">
+                    <h1 id="Song-title">{{ songTitle }}</h1>
+                    <div class="artits">
+                        <!-- prints names of the artites that are in the song uses class artists to design -->
+                        <template v-for="(item, index) in $spotifyPlayer.current_track.value.artists">
+                            <NuxtLink class="artist" v-if="index == $spotifyPlayer.current_track.value.artists.length - 1"
+                                to="/">
+                                {{
+                                    item.name
+                                }} </NuxtLink>
+                            <NuxtLink class="artist" v-if="index != $spotifyPlayer.current_track.value.artists.length - 1"
+                                to="/">
+                                {{
+                                    item.name
+                                }}, </NuxtLink>
+                        </template>
                     </div>
                 </div>
-                <div id="progressAmount" class="Progressbar" v-bind:style="{ width: playerProgressProcent + '%' }"></div>
             </div>
-            <div class="Progressbar" @mouseover="processBarHover('on')" @mouseleave="processBarHover('off')">
-                <input type="range" @mouseup="" @input="rangeChange" v-model="playerProgressProcent" min="0" max="100" />
+            <div class="middle">
+                <div>
+                    <button id="shuffle">
+                        <font-awesome-icon icon="fa-solid fa-shuffle" style="color: #ffffff; font-size: 20px;" />
+                    </button>
+                    <button id="prevSong">
+                        <font-awesome-icon icon="fa-solid fa-forward-step"
+                            style="color: #ffffff; font-size: 25px; transform: rotate(180deg);" />
+                    </button>
+                    <button id="pause-play" @click="$spotifyPlayer.togglePlay()">
+                        <font-awesome-icon v-if="$spotifyPlayer.paused.value" icon="fa-solid fa-play"
+                            style=" font-size: 30px;" />
+                        <font-awesome-icon v-else icon="fa-solid fa-pause" style=" font-size: 30px;" />
+                    </button>
+                    <button id="nextSong">
+                        <font-awesome-icon icon="fa-solid fa-forward-step" style="color: #ffffff; font-size: 25px;" />
+                    </button>
+                    <button id="repeat">
+                        <font-awesome-icon icon="fa-solid fa-repeat" style="color: #ffffff; font-size: 20px;" />
+                    </button>
+                </div>
+                <div>
+                    <p class="durationTime">{{ position.positionOnlyMin }}:{{ position.positionOnlySec }}</p>
+                    <input v-model="playerProgressProcent" :style="rangeStyle" id="playerProgress"
+                        type="range">
+                    <p class="durationTime">{{ duration.durationOnlyMin }}:{{ duration.durationOnlySec }}</p>
+                </div>
+            </div>
+            <div class="right">
+                <button id="platform"></button>
+                <div id="platforms">
+                    <button id="spotify"></button>
+                    <button id="Audition"></button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { Input } from 'postcss';
 import { InputObject } from 'untyped';
+
+//const used to display information from the player
+const songTitle = ref("temp")
 
 const { $spotifyPlayer } = useNuxtApp();
 // Laver et interval på 1s vi bruger det til at updatere process linjen
@@ -45,25 +74,19 @@ setInterval(() => {
     PlayerProgressProcent()
 }, 1000)
 
-
 // Progresbar code
 // Updates the postion of the process bar to reflect the postion from spotify when changed
+watch($spotifyPlayer.current_track, () => {
+    songTitle.value = $spotifyPlayer.current_track.value.name;
+})
+
 watch($spotifyPlayer.position, () => {
     UpdaingPositionValue.value = $spotifyPlayer.position.value;
 })
-// funktion der gør så vores processbar bliver helt hvid når vi holder musen over
-const processBarHover = (t: string) => {
-    const doc = document.getElementById('progressAmount');
-    if (t == "on" && doc != null) doc.style.backgroundColor = "white";
-    else if (doc != null) doc.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
-}
 
-const rangeChange = (e: InputObject) => {
-    if (e.target != null) {
-        e.target.value
-    }
-}
-
+const rangeStyle = computed(() => ({
+  background: `linear-gradient(to right, #3940E9 0%, #3940E9 ${playerProgressProcent.value}%, white ${playerProgressProcent.value}%, white 100%)`
+}));
 // const used to change the position of the Progress Bar
 const playerProgressProcent = ref()
 // updates the position of our playerProgressProcent once a secound using the interval
@@ -101,147 +124,139 @@ const position = ref({
     background-image: url("https://images.freecreatives.com/wp-content/uploads/2016/04/Calm-Mountain-Lake-Landscape-Wallpaper.jpg");
 }
 
-.Player-box {
+.Player-container {
+    background-color: #000000b0;
     position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 6em;
+    display: flex;
+    flex-basis: 100%;
+    overflow: hidden;
+    align-items: center;
+    justify-content: 'space-between';
     backdrop-filter: blur(15px);
-    background-color: rgba(34, 34, 34, 0.75);
-    width: 620px;
-    height: 140px;
-    left: 10px;
-    bottom: 10px;
-    border-radius: 20px;
 }
 
-.Control {
-    grid-area: Control;
+.Player-container>* {
+    flex-basis: 100%;
+    width: 100%;
+    height: 6em;
 }
 
-.current-song-img-container {
-    grid-area: Image;
+/* Style for left element */
+.left {
+    display: flex;
+    align-items: center;
 }
 
-.current-song-img-container img {
-    grid-area: Image;
-    width: auto;
-    height: 140px;
-    object-fit: fill;
-    overflow: hidden;
-}
-
-.No-Overflow {
-    overflow: hidden;
+.grid-stack {
     position: relative;
-    border-radius: 20px;
+    display: grid;
     height: 100%;
     width: 100%;
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    grid-template-rows: 1fr;
-    gap: 0px 0px;
-    grid-template-areas:
-        "Image Control";
-
-}
-
-/* Title and artist */
-#Title {
-    font-size: 20px;
-    color: white;
-    padding-left: 20px;
-}
-
-.Song-Info {
-    margin-left: 20px;
+    grid-template-rows: repeat(2, 50%);
     overflow: hidden;
-    width: 200px;
-    height: 20px;
-    display: inline-block;
+}
+
+.grid-stack>* {
+    padding-left: 10px;
+}
+
+.grid-stack h1 {
+    grid-column: 1 / 2;
+    color: white;
+    font-family: 'lora', sans-serif;
+    font-size: 20px;
+    text-overflow: clip;
     white-space: nowrap;
 }
 
-
-.artists {
-    padding-right: 10px;
+.grid-stack a {
+    grid-column: 2 / 3;
     color: white;
     text-decoration: none;
+    font-family: 'lora', sans-serif;
+    font-size: 16px;
 }
 
 .artists:hover {
     text-decoration: underline;
 }
 
-
-/* css for progressbar */
-.Progressbar input[type="range"]::-webkit-slider-thumb {
-    position: relative;
-    margin-left: 0px;
+.Player-container .left img {
+    height: 6em
 }
 
-
-/* removes the default look of the input type range */
-.Progressbar input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    background: transparent;
-    cursor: pointer;
-    width: 15rem;
-}
-
-/***** Track Styles *****/
-/***** Chrome, Safari, Opera, and Edge Chromium *****/
-.Progressbar input[type="range"]::-webkit-slider-runnable-track {
-    position: absolute;
-    bottom: 0px;
-    left: -5px;
-    height: 10px;
-    width: 630px;
-    background: none;
-    height: 0.7rem;
-}
-
-/******** Firefox ********/
-.Progressbar input[type="range"]::-moz-range-track {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    height: 10px;
-    width: 630px;
-    background: none;
-    height: 0.7rem;
-}
-
-/***** Thumb Styles *****/
-/***** Chrome, Safari, Opera, and Edge Chromium *****/
-.Progressbar input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    /* Override default look */
-    appearance: none;
-    margin-top: -2px;
-    /* Centers thumb on the track */
-    background-color: #1f1f1f;
-    height: 0;
-    width: 0;
-    border-radius: 100%;
-}
-
-.Progressbar:hover input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    /* Override default look */
-    appearance: none;
-    margin-top: -2px;
-    /* Centers thumb on the track */
-    background-color: #1f1f1f;
-    height: 1rem;
-    width: 1rem;
-    border-radius: 100%;
-}
-
-.No-Overflow #progressAmount {
-    background-color: rgba(255, 255, 255, 0.5);
-    position: absolute;
-    height: 0.6rem;
+/* style for middle element */
+.middle {
+    display: grid;
+    grid-template-rows: 2fr 1fr;
     width: 100%;
-    bottom: 0px;
-    left: 0px;
 }
-</style>
+
+.middle div:first-child {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 7px;
+}
+
+.middle div:first-child button {
+    padding: 15px;
+    background-color: transparent;
+    border: none;
+    width: 4.5em;
+    height: 4.5em;
+}
+
+.middle div:last-child {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -7px;
+}
+
+.middle div:last-child p {
+    font-size: 0.8em;
+    color: white;
+}
+
+.middle div:last-child input {
+    width: 100%;
+}
+
+/* Customizing the input range */
+#playerProgress {
+    background: white;
+    border: solid 1px black;
+    border-radius: 8px;
+    height: 7px;
+    outline: none;
+    -webkit-appearance: none;
+}
+#playerProgress::-webkit-slider-thumb {
+  appearance: none;
+}
+
+#playerProgress:hover::-webkit-slider-thumb {
+  appearance: auto;
+}
+
+#playerProgress::-moz-range-thumb {
+  display: none;
+}
+
+#playerProgress:hover::-moz-range-thumb {
+  display: block;
+}
+
+/* Icons for buttons */
+.middle div button:nth-child(3) {
+    border-radius: 100%;
+    background: white;
+}
+
+.middle div button:nth-child(3) .playerIcons {
+    size: 10px;
+}</style>
