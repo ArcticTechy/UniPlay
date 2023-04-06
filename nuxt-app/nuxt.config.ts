@@ -16,10 +16,13 @@ export default defineNuxtConfig({
     googleFonts: {
         families: {
             lora: true,
-            display: 'swap',
-
-        }
+            display: 'swap', }
     },
+    head: {
+        script: [
+          { src: 'https://sdk.scdn.co/spotify-player.js' } // load script in your static folder
+        ]
+      },
     css: [
         '@fortawesome/fontawesome-svg-core/styles.css'
       ]
