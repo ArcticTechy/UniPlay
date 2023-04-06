@@ -45,8 +45,7 @@
                 </div>
                 <div>
                     <p class="durationTime">{{ position.positionOnlyMin }}:{{ position.positionOnlySec }}</p>
-                    <input v-model="playerProgressProcent" :style="rangeStyle" id="playerProgress"
-                        type="range">
+                    <input v-model="playerProgressProcent" :style="rangeStyle" id="playerProgress" type="range">
                     <p class="durationTime">{{ duration.durationOnlyMin }}:{{ duration.durationOnlySec }}</p>
                 </div>
             </div>
@@ -62,7 +61,6 @@
 </template>
 
 <script setup lang="ts">
-import { Input } from 'postcss';
 import { InputObject } from 'untyped';
 
 //const used to display information from the player
@@ -85,7 +83,7 @@ watch($spotifyPlayer.position, () => {
 })
 
 const rangeStyle = computed(() => ({
-  background: `linear-gradient(to right, #3940E9 0%, #3940E9 ${playerProgressProcent.value}%, white ${playerProgressProcent.value}%, white 100%)`
+    background: `linear-gradient(to right, #3940E9 0%, #3940E9 ${playerProgressProcent.value}%, white ${playerProgressProcent.value}%, white 100%)`
 }));
 // const used to change the position of the Progress Bar
 const playerProgressProcent = ref()
@@ -235,20 +233,21 @@ const position = ref({
     outline: none;
     -webkit-appearance: none;
 }
+
 #playerProgress::-webkit-slider-thumb {
-  appearance: none;
+    appearance: none;
 }
 
 #playerProgress:hover::-webkit-slider-thumb {
-  appearance: auto;
+    appearance: auto;
 }
 
 #playerProgress::-moz-range-thumb {
-  display: none;
+    display: none;
 }
 
 #playerProgress:hover::-moz-range-thumb {
-  display: block;
+    display: block;
 }
 
 /* Icons for buttons */
@@ -259,4 +258,5 @@ const position = ref({
 
 .middle div button:nth-child(3) .playerIcons {
     size: 10px;
-}</style>
+}
+</style>
