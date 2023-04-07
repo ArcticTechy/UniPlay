@@ -5,6 +5,7 @@
     <div>
       <button @click="LoginSpotify">Login</button>
       <ClientOnly>
+        <SideBar></SideBar>
         <Player/>
         <!--<SpotifyPlayback/>-->
       </ClientOnly>
