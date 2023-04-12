@@ -3,11 +3,13 @@
     </head>
     
     <div>
-      <button @click="LoginSpotify"></button>
+      <button @click="LoginSpotify">Login</button>
       <ClientOnly>
-
-        <SpotifyPlayback/>
+        <SideBar></SideBar>
+        <Player/>
+        <!--<SpotifyPlayback/>-->
       </ClientOnly>
+      <NuxtPage />
       
     </div>
 </template>
