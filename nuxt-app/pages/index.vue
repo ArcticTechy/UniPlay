@@ -9,6 +9,7 @@
         <Player/>
         <!--<SpotifyPlayback/>-->
       </ClientOnly>
+      <NuxtPage />
       
     </div>
 </template>

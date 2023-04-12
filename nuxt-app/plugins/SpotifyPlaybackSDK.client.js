@@ -32,16 +32,7 @@ export default defineNuxtPlugin(nuxtApp => {
   const Position = ref("")
   const Duration = ref("")
   const Paused = ref("")
-  // Gets new access token using the refresh api
-  async function GetRefreshToken() {
-    const { data: newAccessToken } = await useFetch('/api/spotify/refresh', {
-      method: 'POST',
-      body: {
-        refreshToken: refreshToken,
-      }
-    })
-    token.value = newAccessToken.value;
-  }
+  
     // code in this tag runs when the spotify playback sdk is fully loaded
   window.onSpotifyWebPlaybackSDKReady = () => {
     // Get spotify_access_token cookie that we made in /callback/[platform](Spotify)
@@ -50,11 +41,15 @@ export default defineNuxtPlugin(nuxtApp => {
     if (token.value) {
       spotifyPlayer.value = new Spotify.Player({
         name: 'UniPlay',
-        getOAuthToken: cb => { 
+        getOAuthToken: async cb => { 
           // sets the token using a javascript callback function (My head hurts)
-          cb(token.value); 
-          // set gets new token 10 secs before it expires
-          setTimeout(GetRefreshToken, (expiresIn - 10)*1000);
+          const { data: newAccessToken } = await useFetch('/api/spotify/refresh', {
+            method: 'POST',
+            body: {
+              refreshToken: refreshToken,
+            }
+          })
+          cb(newAccessToken.value.access_token); 
         },
         volume: 0.5
       });
