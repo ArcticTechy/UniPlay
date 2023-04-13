@@ -57,6 +57,8 @@ export default defineNuxtPlugin(nuxtApp => {
       // logs in the that the playback device is ready when it is togther with its id
       spotifyPlayer.value.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
+        const deviceID = useCookie('spotifyDeviceID');
+        deviceID.value = device_id;
       });
       /* Gives us values for Paused, posistion, duration, and track info when the play changes state
          changing state mean volume, play/pause, new track and so on  */

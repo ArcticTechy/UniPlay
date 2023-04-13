@@ -5,16 +5,16 @@
 
         </div>
         <div class="userContent">
-            <button @click="changesong" style="background-color: yellow;">test</button>
             <template v-for="(item) in playlists" >
-                <p>{{ item.name }}</p>
+                <NuxtLink :to="`/spotify/playlist?id=${item.id}`">{{ item.name }}</NuxtLink>
             </template>
         </div>
     </div>
-</template>
+  </template>
 
 <script setup lang="ts">
 const accessToken = useCookie('spotify_access_token')
+const device_id = useCookie('spotifyDeviceID');
 
 async function getUserPlaylists(accessToken) {
   const response = await fetch('https://api.spotify.com/v1/me/playlists', {
@@ -33,26 +33,11 @@ getUserPlaylists(accessToken.value)
     playlists.value = Playlists
   });
 
-  async function changesong() {
-  const device_id = '8b5acc3fd127d91dc1f6b60a0cafa7f1fadedb42';
-  const track_uri = 'spotify:track:1cDeP3HOdeIQXtBdWCjI4T';
-
-  await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken.value}`
-    },
-    body: JSON.stringify({ uris: [track_uri] })
-  });
-}
-
-
 </script>
 
 <style scoped>
 .sidebar {
-    width: 25%;
+    width: 100%;
     height: 100%;
     background-color: green !important;    
 }
