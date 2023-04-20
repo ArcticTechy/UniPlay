@@ -2,7 +2,7 @@
 
 <script setup lang="ts">
 
-
+/*   SLET SENERE
 const { data: host } = await useFetch('/api/audius/host', {
     method: 'POST',
 })
@@ -15,9 +15,9 @@ VIRK();
 
 const songID = ref();
 const streamUrl = ref()
+const searchQuery =   "Hello darling";
 async function VIRK() {
 // Search query skal kunne ændres med en search bar. Hello darling er test værdi.
-    const searchQuery = "Hello darling";
     await fetch(host.value + '/v1/tracks/search?query=' + searchQuery + ' b2b&app_name=UniPlay',
         {
             method: 'GET',
@@ -34,10 +34,11 @@ async function VIRK() {
             streamUrl.value = host.value + '/v1/tracks/' + songID.value + '/stream?app_name=UniPlay';
             streamTrack()
         });
-    }
+    }*/
 
 
-
+ // SLET IKKE DET HER DET ER VIGTIGT PLS NO STOP HJÆLP KOPIER PLUGIN TING YES
+ /*
 async function streamTrack() {
   // Track info
   const trackInfo = await fetch(host.value + '/v1/tracks/'+songID.value+'?app_name=UniPlay').then(res => res.json());
@@ -47,6 +48,6 @@ async function streamTrack() {
   const audio = new Audio(streamUrl.value);
   // Play track
   audio.play();
-}
+}*/
 
 </script>
