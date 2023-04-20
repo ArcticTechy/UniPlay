@@ -12,7 +12,7 @@
         <p>Login to start listening </p>
       </div>
       <div class="loginOptions">
-        <div id="Spotify">
+        <div id="LoginSpotify">
           <p @click="LoginSpotify">Login With </p>
           <font-awesome-icon icon="fa-brands fa-spotify" style="font-size: 2.8em; color: #1DB954;" />
         </div>
@@ -138,7 +138,7 @@ body {
   justify-content: center;
 }
 
-#Spotify {
+#LoginSpotify {
   position: absolute;
   top: 50%;
   display: flex;
@@ -152,7 +152,7 @@ body {
   border-radius: 10px;
 }
 
-#Spotify p {
+#LoginSpotify p {
   padding-right: 10px;
 }
 
