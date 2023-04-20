@@ -1,17 +1,38 @@
 <!-- Does not refresh on id change -->
-<template>
-    <p> hello world</p>
-    <template v-for="(item, index) in playlistData.items" >
-        <p @click="playSong(item.track.id)">{{item.track.name}}</p>
+<template :key="query">
+  <div class="song" v-for="(item) in playlistData.value.items">
+    <h1 @click="playPlaylist(item.track.id)">{{ item.track.name }}</h1>
+    <template v-for="(artistItem, index) in item.track.artists">
+      <NuxtLink  class="artist" :to="`/spotify/artist?id=${artistItem.id}`" v-if="index == artistItem.length - 1">
+        {{
+          artistItem.name
+        }} </NuxtLink>
+      <NuxtLink class="artist" :to="`/spotify/artist?id=${artistItem.id}`" v-if="index != artistItem.length - 1">
+        {{
+          artistItem.name
+        }}, </NuxtLink>
     </template>
+  </div>
 </template>
 
 <script setup lang="ts">
+// makes a route value wich allows us to modifie and observice the url bar
 const route = useRoute()
+// Gets the acess token
 const accessToken = useCookie('spotify_access_token')
-const device_id = useCookie('spotifyDeviceID');
-async function getUserPlaylist(id) {
-  const {data} = await useFetch(`https://api.spotify.com/v1/playlists/${id}/tracks`, {
+// gets the spotify plugin
+const { $deviceID } = useNuxtApp();
+const playlistData = ref();
+const query = ref(route.query.id)
+
+watch(route, async () => {
+  query.value = route.query.id;
+  playlistData.value = await getUserPlaylist(query.value);
+  console.log("deviceID:" + $deviceID.value)
+})
+
+async function getUserPlaylist(id: any) {
+  const { data } = await useFetch(`https://api.spotify.com/v1/playlists/${id}/tracks`, {
     headers: {
       Authorization: `Bearer ${accessToken.value}`
     },
@@ -20,16 +41,20 @@ async function getUserPlaylist(id) {
   console.log(data)
   return data;
 }
-const playlistData = ref(await getUserPlaylist(route.query.id));
-async function playSong(songId) {
-  const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id.value}`, {
+playlistData.value = await getUserPlaylist(query.value);
+async function playPlaylist(songId: string) {
+  const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${$deviceID.value}`, {
     method: 'PUT',
     headers: {
       Authorization: `Bearer ${accessToken.value}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      uris: [`spotify:track:${songId}`]
+      context_uri: `spotify:playlist:${query.value}`,
+      offset: {
+        uri: `spotify:track:${songId}`,
+      },
+      position_ms: 0
     })
   });
 
@@ -37,5 +62,8 @@ async function playSong(songId) {
 </script>
 
 <style>
-
+.PageView p {
+  padding-left: 1em;
+  color: white;
+}
 </style>

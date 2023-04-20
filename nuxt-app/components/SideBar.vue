@@ -48,5 +48,9 @@ getUserPlaylists(accessToken.value)
     width: 100%;
     margin: 10px 0;
 }
-
+.userContent a{
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  display: block;
+}
 </style>

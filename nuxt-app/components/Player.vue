@@ -1,4 +1,5 @@
 <template>
+    <ClientOnly>
     <div class="bg-container">
         <div class="temp" :style="{ backgroundImage: `url('${MainPlayer.currentTrackImage}')` }">
     </div>
@@ -74,6 +75,7 @@
             </div>
         </div>
     </div>
+</ClientOnly>
 </template>
 
 <script setup lang="ts">
