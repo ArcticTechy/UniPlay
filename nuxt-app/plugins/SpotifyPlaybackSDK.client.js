@@ -51,7 +51,7 @@ export default defineNuxtPlugin(nuxtApp => {
               refreshToken: refreshToken,
             }
           })
-          token.value = newAccessToken.value.access_token;
+          document.cookie = "spotify_access_token=" + newAccessToken.value.access_token;
           cb(newAccessToken.value.access_token); 
         },
         volume: 0.5
