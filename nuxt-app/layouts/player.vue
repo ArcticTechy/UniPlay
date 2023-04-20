@@ -1,7 +1,8 @@
 <template>
     <div class="container">
         <div>
-            <SideBar class="sidebar"></SideBar>
+            <!-- <SideBar class="sidebar"></SideBar> -->
+            <SidePanel class="sidebar"></SidePanel>
             <ClientOnly>
                 <Player />
             </ClientOnly>
