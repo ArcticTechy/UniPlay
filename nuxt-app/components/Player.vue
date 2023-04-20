@@ -319,7 +319,7 @@ const MainPlayer = new Player("Spotify")
 setInterval(() => {
     updateSpotifyPosition()
     PlayerProgressInProcent()
-    $spotifyPlayer.getVolume().then(v => {
+    $spotifyPlayer.getVolume().then((v: any) => {
         spotifyVolume.value = v;
     })
 }, 1000)

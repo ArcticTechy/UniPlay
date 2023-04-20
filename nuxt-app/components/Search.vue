@@ -10,6 +10,7 @@ item.title
 </pre>          
         </NuxtLink>
   </template>
+  <button @click="$AudiusPlayer.togglePlay()">pause</button>
 </template>
 
 
@@ -26,6 +27,8 @@ word-wrap: break-word;
 <script setup lang="ts">
 
 let input = ref("");
+const { $AudiusPlayer } = useNuxtApp();
+
 
 
 const host = await $fetch('/api/audius/host/', {
@@ -64,12 +67,12 @@ async function TopSong() {
     return json.data;
 }
 
-async function StreamSong(index = 0) {
-    streamUrl.value = host + '/v1/tracks/' + songArr.value[index].id + '/stream?app_name=UniPlay';
-    curr_track.src = streamUrl.value;
-    curr_track.load();
-    curr_track.play();
-}
-
+// async function StreamSong(index = 0) {
+//     streamUrl.value = host + '/v1/tracks/' + songArr.value[index].id + '/stream?app_name=UniPlay';
+//     curr_track.src = streamUrl.value;
+//     curr_track.load();
+//     curr_track.play();
+// }
+$AudiusPlayer.StreamSong(songArr.value[0].id)
 
 </script>
