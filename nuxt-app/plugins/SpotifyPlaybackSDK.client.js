@@ -9,6 +9,8 @@ export default defineNuxtPlugin(nuxtApp => {
   const token = useCookie('spotify_access_token')
   const refreshToken = useCookie('spotify_refresh_token').value;
   const expiresIn = useCookie('spotify_expires_in').value;
+ let deviceID
+
 
   const spotifyPlayer = ref();
   const currentTrack = ref({
@@ -49,16 +51,20 @@ export default defineNuxtPlugin(nuxtApp => {
               refreshToken: refreshToken,
             }
           })
+          token.value = newAccessToken.value.access_token;
           cb(newAccessToken.value.access_token); 
         },
         volume: 0.5
       });
       // Add event listeners
       // logs in the that the playback device is ready when it is togther with its id
-      spotifyPlayer.value.addListener('ready', ({ device_id }) => {
+      spotifyPlayer.value.addListener('ready', async ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
-        const deviceID = useCookie('spotifyDeviceID');
-        deviceID.value = device_id;
+        // useCookie("deviceID", {
+        //   paths: "/"
+        // }).value = device_id;
+        // nuxtApp.useCookie('deviceID', device_id)
+        deviceID = device_id;
       });
       /* Gives us values for Paused, posistion, duration, and track info when the play changes state
          changing state mean volume, play/pause, new track and so on  */
@@ -105,8 +111,9 @@ export default defineNuxtPlugin(nuxtApp => {
         current_track: computed(() => currentTrack.value),
         position: computed(() => Position.value),
         duration: computed(() => Duration.value),
-        paused: computed(() => Paused.value)
-      }
+        paused: computed(() => Paused.value),
+      },
+      deviceID: computed(() => deviceID)
     }
   }
 })

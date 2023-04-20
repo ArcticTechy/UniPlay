@@ -13,15 +13,15 @@
 </template>
 
 <style>
-
 .sidebar {
     height: 100%;
     width: 100%;
     background-size: cover;
 }
+
 .container {
     display: grid;
     grid-template-columns: 1fr 3fr;
-    
+
 }
 </style>
