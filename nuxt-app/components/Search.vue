@@ -2,7 +2,7 @@
 
 <input type="text" v-model="input" v-on:change="VIRK()" placeholder="Search...">
   <template v-for="(item, index) in songArr">
-      <NuxtLink class="multiline" v-if="index < 10" to="/" @click ="StreamSong(index)">
+      <NuxtLink class="multiline" v-if="index < 10" to="/" @click ="$AudiusPlayer.StreamSong(songArr[index].id)">
 <pre>
 {{
 item.title
@@ -66,13 +66,4 @@ async function TopSong() {
     const json = await res.json()
     return json.data;
 }
-
-// async function StreamSong(index = 0) {
-//     streamUrl.value = host + '/v1/tracks/' + songArr.value[index].id + '/stream?app_name=UniPlay';
-//     curr_track.src = streamUrl.value;
-//     curr_track.load();
-//     curr_track.play();
-// }
-$AudiusPlayer.StreamSong(songArr.value[0].id)
-
 </script>

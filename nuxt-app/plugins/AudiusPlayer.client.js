@@ -7,6 +7,7 @@ export default defineNuxtPlugin(async nuxtApp => {
         method: 'POST'
       })
     async function StreamSong(songID) {
+        console.log(songID)
         streamUrl.value = host + '/v1/tracks/' + songID + '/stream?app_name=UniPlay';
         curr_track.src = streamUrl.value;
         curr_track.load();
