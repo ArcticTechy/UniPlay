@@ -1,79 +1,83 @@
 <template>
-    <div class="bg-container">
-        <div class="temp" :style="{ backgroundImage: `url('${MainPlayer.currentTrackImage}')` }">
-    </div>
-    </div>
-    <div class="Player-container">
-        <div class="left">
-            <img v-bind:src="MainPlayer.currentTrackImage">
-            <div class="grid-stack">
-                <h1 id="Song-title">{{ MainPlayer.songTitle }}</h1>
-                <div class="artits">
-                    <!-- prints names of the artites that are in the song uses class artists to design -->
-                    <template v-for="(item, index) in MainPlayer.artists">
-                        <NuxtLink class="artist" v-if="index == MainPlayer.artists.length - 1" to="/">
-                            {{
-                                item.name
-                            }} </NuxtLink>
-                        <NuxtLink class="artist" v-if="index != MainPlayer.artists.length - 1" to="/">
-                            {{
-                                item.name
-                            }}, </NuxtLink>
-                    </template>
+    <ClientOnly>
+        <div class="bg-container">
+            <div class="temp" :style="{ backgroundImage: `url('${MainPlayer.currentTrackImage}')` }">
+            </div>
+        </div>
+        <div class="Player-container">
+            <div class="left">
+                <img v-bind:src="MainPlayer.currentTrackImage">
+                <div class="grid-stack">
+                    <h1 id="Song-title">{{ MainPlayer.songTitle }}</h1>
+                    <div class="artits">
+                        <!-- prints names of the artites that are in the song uses class artists to design -->
+                        <template v-for="(item, index) in MainPlayer.artists">
+                            <NuxtLink class="artist" v-if="index == MainPlayer.artists.length - 1"
+                                :to="`/spotify/artist?id=${item.id.value}`">
+                                {{
+                                    item.name
+                                }} </NuxtLink>
+                            <NuxtLink class="artist" v-if="index != MainPlayer.artists.length - 1"
+                                :to="`/spotify/artist?id=${item.id.value}`">
+                                {{
+                                    item.name
+                                }}, </NuxtLink>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div class="middle">
+                <div>
+                    <button id="shuffle">
+                        <font-awesome-icon icon="fa-solid fa-shuffle" style="color: #ffffff; font-size: 20px;" />
+                    </button>
+                    <button id="prevSong" @click="MainPlayer.prevSong()">
+                        <font-awesome-icon icon="fa-solid fa-forward-step"
+                            style="color: #ffffff; font-size: 25px; transform: rotate(180deg);" />
+                    </button>
+                    <button id="pause-play" @click="MainPlayer.togglePlay()">
+                        <font-awesome-icon v-if="$spotifyPlayer.paused.value" icon="fa-solid fa-play"
+                            style=" font-size: 30px;" />
+                        <font-awesome-icon v-else icon="fa-solid fa-pause" style=" font-size: 30px;" />
+                    </button>
+                    <button id="nextSong" @click="MainPlayer.nextSong()">
+                        <font-awesome-icon icon="fa-solid fa-forward-step" style="color: #ffffff; font-size: 25px;" />
+                    </button>
+                    <button id="repeat">
+                        <font-awesome-icon icon="fa-solid fa-repeat" style="color: #ffffff; font-size: 20px;" />
+                    </button>
+                </div>
+                <div>
+                    <p class="durationTime">{{ MainPlayer.position.hours.value }}:{{ MainPlayer.position.minutes.value }}:{{
+                        MainPlayer.position.seconds.value }}</p>
+                    <input v-model="progressBar" @input="moveGraditentOnInput" @change="MainPlayer.seekPosition"
+                        :style="rangeStyle" id="playerProgress" type="range" min="0" :max="MainPlayer.duration.value.value">
+                    <p class="durationTime">{{ MainPlayer.duration.hours.value }}:{{ MainPlayer.duration.minutes.value }}:{{
+                        MainPlayer.duration.seconds.value }}</p>
+                </div>
+            </div>
+            <div class="right">
+                <div class="volumeControl pressed">
+                    <button>
+                        <font-awesome-icon icon="fa-solid fa-volume-low" style="font-size: 1.4em; color: #ffffff;" />
+                    </button>
+                    <input type="range" @input="MainPlayer.setVolume">
+                    <button>
+                        <font-awesome-icon icon="fa-solid fa-volume-high" style="font-size: 1.4em; color: #ffffff;" />
+                    </button>
+                </div>
+                <!-- Add class pressed to show all buttons at once -->
+                <div class="platforms">
+                    <button id="Spotify" :class="{ activePlatform: MainPlayer.GetMusicService == 'Spotify' }">
+                        <font-awesome-icon icon="fa-brands fa-spotify" style="font-size: 2.8em; color: #1DB954;" />
+                    </button>
+                    <button id="Audius" :class="{ activePlatform: MainPlayer.GetMusicService == 'Audius' }">
+                        <img src="~/assets/audius/Glyph_White.svg">
+                    </button>
                 </div>
             </div>
         </div>
-        <div class="middle">
-            <div>
-                <button id="shuffle">
-                    <font-awesome-icon icon="fa-solid fa-shuffle" style="color: #ffffff; font-size: 20px;" />
-                </button>
-                <button id="prevSong" @click="MainPlayer.prevSong()">
-                    <font-awesome-icon icon="fa-solid fa-forward-step"
-                        style="color: #ffffff; font-size: 25px; transform: rotate(180deg);" />
-                </button>
-                <button id="pause-play" @click="MainPlayer.togglePlay()">
-                    <font-awesome-icon v-if="$spotifyPlayer.paused.value" icon="fa-solid fa-play"
-                        style=" font-size: 30px;" />
-                    <font-awesome-icon v-else icon="fa-solid fa-pause" style=" font-size: 30px;" />
-                </button>
-                <button id="nextSong" @click="MainPlayer.nextSong()">
-                    <font-awesome-icon icon="fa-solid fa-forward-step" style="color: #ffffff; font-size: 25px;" />
-                </button>
-                <button id="repeat">
-                    <font-awesome-icon icon="fa-solid fa-repeat" style="color: #ffffff; font-size: 20px;" />
-                </button>
-            </div>
-            <div>
-                <p class="durationTime">{{ MainPlayer.position.hours.value }}:{{ MainPlayer.position.minutes.value }}:{{
-                    MainPlayer.position.seconds.value }}</p>
-                <input v-model="progressBar" @input="moveGraditentOnInput" @change="MainPlayer.seekPosition"
-                    :style="rangeStyle" id="playerProgress" type="range" min="0" :max="MainPlayer.duration.value.value">
-                <p class="durationTime">{{ MainPlayer.duration.hours.value }}:{{ MainPlayer.duration.minutes.value }}:{{
-                    MainPlayer.duration.seconds.value }}</p>
-            </div>
-        </div>
-        <div class="right">
-            <div class="volumeControl pressed">
-                <button>
-                    <font-awesome-icon icon="fa-solid fa-volume-low" style="font-size: 1.4em; color: #ffffff;" />
-                </button>
-                <input type="range" @input="MainPlayer.setVolume">
-                <button>
-                    <font-awesome-icon icon="fa-solid fa-volume-high" style="font-size: 1.4em; color: #ffffff;" />
-                </button>
-            </div>
-            <!-- Add class pressed to show all buttons at once -->
-            <div class="platforms">
-                <button id="Spotify" :class="{ activePlatform: MainPlayer.GetMusicService == 'Spotify' }">
-                    <font-awesome-icon icon="fa-brands fa-spotify" style="font-size: 2.8em; color: #1DB954;" />
-                </button>
-                <button id="Audius" :class="{ activePlatform: MainPlayer.GetMusicService == 'Audius' }">
-                    <img src="~/assets/audius/Glyph_White.svg">
-                </button>
-            </div>
-        </div>
-    </div>
+    </ClientOnly>
 </template>
 
 <script setup lang="ts">
@@ -131,13 +135,16 @@ class Player {
         }
     }
     get artists() {
-        let artist: { name: string; uri: string; }[] = []
+        let artist: { name: string; uri: string; id: any; }[] = []
         switch (this.cms) {
             case "Spotify":
                 $spotifyPlayer.current_track.value.artists.forEach(element => {
                     artist.push({
                         name: element.name,
-                        uri: element.uri
+                        uri: element.uri,
+                        id: computed(() => {
+                            return element.uri.slice(element.uri.lastIndexOf(":") + 1);
+                        })
                     })
                 })
                 return artist
@@ -364,6 +371,7 @@ const rangeStyle = computed(() => ({
     z-index: -1;
     overflow: hidden;
 }
+
 .temp {
     width: 120%;
     height: 120%;
@@ -371,6 +379,7 @@ const rangeStyle = computed(() => ({
     margin-left: -120px;
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
     filter: blur(10px);
     -webkit-filter: blur(10px);
     background-color: rebeccapurple;
