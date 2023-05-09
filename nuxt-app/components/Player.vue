@@ -313,7 +313,7 @@ class Player {
 
 }
 
-const MainPlayer = new Player("Spotify")
+const MainPlayer = new Player("Audius")
 
 // Laver et interval på 1s vi bruger det til at updatere process linjen & spotifys postion without called the sdk all the time
 setInterval(() => {
