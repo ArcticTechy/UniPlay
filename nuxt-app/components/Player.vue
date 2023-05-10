@@ -36,8 +36,7 @@
                             style="color: #ffffff; font-size: 25px; transform: rotate(180deg);" />
                     </button>
                     <button id="pause-play" @click="MainPlayer.togglePlay()">
-                        <font-awesome-icon v-if="$spotifyPlayer.paused.value" icon="fa-solid fa-play"
-                            style=" font-size: 30px;" />
+                        <font-awesome-icon v-if="MainPlayer.isplaying" icon="fa-solid fa-play" style=" font-size: 30px;" />
                         <font-awesome-icon v-else icon="fa-solid fa-pause" style=" font-size: 30px;" />
                     </button>
                     <button id="nextSong" @click="MainPlayer.nextSong()">
@@ -81,9 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { ChangeEvent } from 'rollup';
-import { InputObject } from 'untyped';
-const { $spotifyPlayer } = useNuxtApp();
+const { $spotifyPlayer, $AudiusPlayer } = useNuxtApp();
 
 //Update spotify vol once a sec to stay in sync
 const spotifyVolume = ref(0)
@@ -134,6 +131,22 @@ class Player {
                 return "https://cdn3.iconfinder.com/data/icons/pyconic-icons-3-1/512/cd-512.png";
         }
     }
+    get isplaying() {
+        switch (this.cms) {
+            case "Spotify":
+                return $spotifyPlayer.paused.value;
+                break;
+            case "Audius":
+                return $AudiusPlayer.isPlaying.value;
+                break;
+            case "none":
+                return false;
+                break;
+            default:
+                return false;
+        }
+    }
+
     get artists() {
         let artist: { name: string; uri: string; id: any; }[] = []
         switch (this.cms) {
@@ -179,12 +192,20 @@ class Player {
                     })
                 };
             case 'Audius':
-                // togglePlay Function here
-                return {
-                    value: computed(() => 0),
-                    hours: computed(() => 0),
-                    minutes: computed(() => 0),
-                    seconds: computed(() => 0)
+            return {
+                    value: computed(() => Number($AudiusPlayer.position.value)),
+                    hours: computed(() => {
+                        const hours = Math.floor($AudiusPlayer.position.value / 3600);
+                        return hours < 10 ? '0' + hours : hours.toString();
+                    }),
+                    minutes: computed(() => {
+                        const minutes = Math.floor(($AudiusPlayer.position.value % 3600) / 60);
+                        return minutes < 10 ? '0' + minutes : minutes.toString();
+                    }),
+                    seconds: computed(() => {
+                        const seconds = Math.floor($AudiusPlayer.position.value % 60);
+                        return seconds < 10 ? '0' + seconds : seconds.toString();
+                    })
                 };
             case 'none':
                 return {
@@ -221,12 +242,20 @@ class Player {
                     })
                 };
             case 'Audius':
-                // togglePlay Function here
                 return {
-                    value: computed(() => 0),
-                    hours: computed(() => 0),
-                    minutes: computed(() => 0),
-                    seconds: computed(() => 0)
+                    value: computed(() => Number($AudiusPlayer.duration.value)),
+                    hours: computed(() => {
+                        const hours = Math.floor(Number($AudiusPlayer.duration.value) / 3600);
+                        return hours < 10 ? '0' + hours : hours.toString();
+                    }),
+                    minutes: computed(() => {
+                        const minutes = Math.floor((Number($AudiusPlayer.duration.value) % 3600) / 60);
+                        return minutes < 10 ? '0' + minutes : minutes.toString();
+                    }),
+                    seconds: computed(() => {
+                        const seconds = Math.floor(Number($AudiusPlayer.duration.value) % 60);
+                        return seconds < 10 ? '0' + seconds : seconds.toString();
+                    })
                 };
             case 'none':
                 return {
@@ -265,10 +294,11 @@ class Player {
     togglePlay() {
         switch (this.cms) {
             case "Spotify":
-                $spotifyPlayer.togglePlay()
+                $spotifyPlayer.togglePlay();
                 break;
             case "Audius":
-                // togglePlay Function here
+                $AudiusPlayer.togglePlay();
+                console.log(MainPlayer.duration.value.value)
                 break;
             case "none":
                 console.log("No service playing")
@@ -307,7 +337,7 @@ class Player {
                 $spotifyPlayer.seek((e.target as HTMLInputElement).value)
                 break;
             case "Audius":
-                // togglePlay Function here
+                $AudiusPlayer.seek((e.target as HTMLInputElement).value)
                 break;
             case "none":
                 console.log("No service playing")
@@ -315,12 +345,12 @@ class Player {
         }
     }
     setVolume(e: Event) {
+        $AudiusPlayer.setVolume((Number((e.target as HTMLInputElement).value) / 100))
         $spotifyPlayer.setVolume((Number((e.target as HTMLInputElement).value) / 100))
     }
-
 }
 
-const MainPlayer = new Player("Audius")
+const MainPlayer = new Player("Spotify")
 
 // Laver et interval på 1s vi bruger det til at updatere process linjen & spotifys postion without called the sdk all the time
 setInterval(() => {
@@ -588,4 +618,5 @@ const rangeStyle = computed(() => ({
     flex-direction: column;
     width: 5em;
     z-index: -1;
-}</style>
+}
+</style>
