@@ -1,6 +1,6 @@
 <template>
 
-<input type="text" v-model="input" v-on:change="VIRK()" placeholder="Search...">
+<input type="text" v-model="input" v-on:change="Search10()" placeholder="Search...">
   <template v-for="(item, index) in songArr">
       <NuxtLink class="multiline" v-if="index < 10" to="/" @click ="$AudiusPlayer.StreamSong(songArr[index].id)">
 <pre>
@@ -45,7 +45,7 @@ const top10Songs = ref();
 const songID = ref();
 const streamUrl = ref("");
 const searchQuery = ref();
-async function VIRK() {
+async function Search10() {
     searchQuery.value = input.value;
     await fetch(host + '/v1/tracks/search?query=' + searchQuery.value + ' b2b&app_name=UniPlay',
     {
