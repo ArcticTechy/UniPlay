@@ -9,7 +9,7 @@ export default defineNuxtPlugin(nuxtApp => {
   const token = useCookie('spotify_access_token')
   const refreshToken = useCookie('spotify_refresh_token').value;
   const expiresIn = useCookie('spotify_expires_in').value;
- let deviceID
+  const deviceID = ref("");
 
 
   const spotifyPlayer = ref();
@@ -64,7 +64,7 @@ export default defineNuxtPlugin(nuxtApp => {
         //   paths: "/"
         // }).value = device_id;
         // nuxtApp.useCookie('deviceID', device_id)
-        deviceID = device_id;
+        deviceID.value = device_id;
       });
       /* Gives us values for Paused, posistion, duration, and track info when the play changes state
          changing state mean volume, play/pause, new track and so on  */
@@ -113,7 +113,7 @@ export default defineNuxtPlugin(nuxtApp => {
         duration: computed(() => Duration.value),
         paused: computed(() => Paused.value),
       },
-      deviceID: computed(() => deviceID)
+      deviceID: computed(() => deviceID.value)
     }
   }
 })

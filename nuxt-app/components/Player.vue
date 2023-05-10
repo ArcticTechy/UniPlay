@@ -390,7 +390,9 @@ const rangeStyle = computed(() => ({
     position: absolute;
     bottom: 0;
     width: 100%;
+    height: 100%;
     left: 0;
+    z-index: 4;
     display: flex;
     flex-basis: 100%;
     align-items: center;
@@ -407,7 +409,7 @@ const rangeStyle = computed(() => ({
 .left {
     display: flex;
     align-items: center;
-    height: 6em;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -451,7 +453,7 @@ const rangeStyle = computed(() => ({
 
 /* style for middle element */
 .middle {
-    height: 6em;
+    height: 100%;
     overflow: hidden;
     display: grid;
     grid-template-rows: 2fr 1fr;
@@ -531,6 +533,7 @@ const rangeStyle = computed(() => ({
     display: flex;
     justify-content: right;
     margin-left: auto;
+    height: 100%;
 }
 
 .right .volumeControl {
