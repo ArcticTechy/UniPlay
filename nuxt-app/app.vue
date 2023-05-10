@@ -125,10 +125,11 @@ body {
 }
 
 .PageView {
+  position: relative;
   overflow-x: hidden;
   overflow-y: scroll;
-  height: 88vh;
   width: 100%;
+    height: 100%;
   background-color: #05000070;
 }
 

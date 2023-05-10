@@ -132,7 +132,7 @@ function formatDuration(durationMs: number) {
 }
 
 .duration {
-  flex-flow: end;
+  flex-flow: flex-end;
   margin: auto;
 }
 
