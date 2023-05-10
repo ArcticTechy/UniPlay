@@ -81,7 +81,6 @@
 
 <script setup lang="ts">
 const { $spotifyPlayer, $AudiusPlayer } = useNuxtApp();
-
 //Update spotify vol once a sec to stay in sync
 const spotifyVolume = ref(0)
 
@@ -298,7 +297,6 @@ class Player {
                 break;
             case "Audius":
                 $AudiusPlayer.togglePlay();
-                console.log(MainPlayer.duration.value.value)
                 break;
             case "none":
                 console.log("No service playing")
@@ -351,6 +349,7 @@ class Player {
 }
 
 const MainPlayer = new Player("Spotify")
+
 
 // Laver et interval på 1s vi bruger det til at updatere process linjen & spotifys postion without called the sdk all the time
 setInterval(() => {
