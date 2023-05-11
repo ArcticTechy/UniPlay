@@ -90,17 +90,17 @@ async function SearchFromInput(searchQuery: string, searchType: string, platform
 function playSongOnClick(id: string) {
   switch ($PlatformPlugin.platform) {
     case "Spotify":
-    if(!$AudiusPlayer.isPlaying.value){
-                    $AudiusPlayer.togglePlay();
-                }
+      if (!$AudiusPlayer.isPlaying.value) {
+        $AudiusPlayer.togglePlay();
+      }
       playSongOnSpotify(id)
       $PlatformPlugin.platform = platform.value;
       break;
 
     case "Audius":
-    if(!$spotifyPlayer.paused.value){
-                    $spotifyPlayer.togglePlay();
-                }
+      if (!$spotifyPlayer.paused.value) {
+        $spotifyPlayer.togglePlay();
+      }
       $AudiusPlayer.StreamSong(id)
       $PlatformPlugin.platform = platform.value;
       break;
@@ -117,7 +117,7 @@ async function playSongOnSpotify(id: string) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      uris:  [`spotify:track:${id}`],
+      uris: [`spotify:track:${id}`],
       position_ms: 0
     })
   });
