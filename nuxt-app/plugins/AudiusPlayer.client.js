@@ -32,9 +32,6 @@ export default defineNuxtPlugin(async nuxtApp => {
             curr_track.play();
         else curr_track.pause();
     }
-    watch(curr_track, () => {
-        console.log("Se mor det ikke en fase")
-    })
     const paused = ref(curr_track.paused)
 
     return {
