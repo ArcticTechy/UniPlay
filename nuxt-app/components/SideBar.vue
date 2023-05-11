@@ -88,7 +88,7 @@ async function SearchFromInput(searchQuery: string, searchType: string, platform
 }
 
 function playSongOnClick(id: string) {
-  switch ($PlatformPlugin.platform) {
+  switch (platform.value) {
     case "Spotify":
       if (!$AudiusPlayer.isPlaying.value) {
         $AudiusPlayer.togglePlay();
