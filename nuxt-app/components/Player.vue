@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-const { $spotifyPlayer, $AudiusPlayer } = useNuxtApp();
+const { $spotifyPlayer, $AudiusPlayer, $PlatformPlugin } = useNuxtApp();
 //Update spotify vol once a sec to stay in sync
 const spotifyVolume = ref(0)
 
@@ -99,7 +99,7 @@ class Player {
         return this.cms;
     }
     get songTitle(): string {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 return $spotifyPlayer.current_track.value.name;
                 break;
@@ -115,7 +115,7 @@ class Player {
         }
     }
     get currentTrackImage() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 return $spotifyPlayer.current_track.value.album.images[0].url;
                 break;
@@ -131,7 +131,7 @@ class Player {
         }
     }
     get isplaying() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 return $spotifyPlayer.paused.value;
                 break;
@@ -148,7 +148,7 @@ class Player {
 
     get artists() {
         let artist: { name: string; uri: string; id: any; }[] = []
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 $spotifyPlayer.current_track.value.artists.forEach(element => {
                     artist.push({
@@ -173,7 +173,7 @@ class Player {
         }
     }
     get position() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case 'Spotify':
                 return {
                     value: computed(() => Number(spotifyUpdaingPos.value)),
@@ -223,7 +223,7 @@ class Player {
         }
     }
     get duration() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case 'Spotify':
                 return {
                     value: computed(() => Number($spotifyPlayer.duration.value)),
@@ -273,7 +273,7 @@ class Player {
         }
     }
     get currentVolume(): number {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 return spotifyVolume.value;
                 break;
@@ -291,11 +291,17 @@ class Player {
 
 
     togglePlay() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
+                if(!$AudiusPlayer.isPlaying.value){
+                    $AudiusPlayer.togglePlay();
+                }
                 $spotifyPlayer.togglePlay();
                 break;
             case "Audius":
+            if(!$spotifyPlayer.paused.value){
+                    $spotifyPlayer.togglePlay();
+                }
                 $AudiusPlayer.togglePlay();
                 break;
             case "none":
@@ -304,7 +310,7 @@ class Player {
         }
     }
     nextSong() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 $spotifyPlayer.nextTrack()
                 break;
@@ -317,7 +323,7 @@ class Player {
         }
     }
     prevSong() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 $spotifyPlayer.previousTrack()
                 break;
@@ -330,7 +336,7 @@ class Player {
         }
     }
     seekPosition(e: Event) {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 $spotifyPlayer.seek((e.target as HTMLInputElement).value)
                 break;
