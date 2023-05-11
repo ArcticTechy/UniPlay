@@ -39,7 +39,7 @@ const route = useRoute()
 // Gets the acess token
 const accessToken = useCookie('spotify_access_token')
 // gets the spotify plugin
-const { $deviceID } = useNuxtApp();
+const { $deviceID, $PlatformPlugin , $AudiusPlayer } = useNuxtApp();
 const playlistData = ref();
 const query = ref(route.query.id)
 
@@ -75,7 +75,10 @@ async function playPlaylist(songId: string) {
       position_ms: 0
     })
   });
-
+  $PlatformPlugin.platform = "Spotify";
+    if(!$AudiusPlayer.isPlaying.value) {
+        $AudiusPlayer.togglePlay();
+    }
 }
 
 

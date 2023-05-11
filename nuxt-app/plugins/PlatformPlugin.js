@@ -5,7 +5,7 @@ export default defineNuxtPlugin(async nuxtApp => {
     return {
         provide: {
             PlatformPlugin: {
-                platform          
+                platform: platform,    
             }
         }
     }
