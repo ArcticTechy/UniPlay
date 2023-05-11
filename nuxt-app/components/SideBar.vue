@@ -2,24 +2,24 @@
   <div class="sidebar">
     <div class="SearchInput">
       <input v-model="SearchText" type="search" placeholder="Search..." @click="isSearching = true;"
-        @input="typeTimer(SearchText, 'track', $PlatformPlugin.platform)">
+        @input="typeTimer(SearchText, 'track', platform)">
       <button @click="pressingXOnInput">
         <!-- <font-awesome-icon icon="fa-solid fa-magnifying-glass" v-if="!isSearching" /> -->
         <font-awesome-icon icon="fa-solid fa-xmark" v-if="isSearching" />
       </button>
     </div>
     <div class="ChooseService" v-if="isSearching">
-      <button @click=" $PlatformPlugin.platform = 'Spotify';"> Spotify </button>
-      <button @click=" $PlatformPlugin.platform = 'Audius';"> Audius </button>
+      <button @click=" platform = 'Spotify';"> Spotify </button>
+      <button @click=" platform = 'Audius';"> Audius </button>
     </div>
     <div class="SearchResult" v-if="isSearching && SearchResults?.length > 0">
       <h1>songs</h1>
-      <template v-if="$PlatformPlugin.platform == 'Spotify'" v-for="track in SearchResults" :key="SearchText.value">
+      <template v-if="platform == 'Spotify'" v-for="track in SearchResults" :key="SearchText.value">
         <div @click="playSongOnClick(track.id)">
           <p style="color: aliceblue;">{{ track.name }}</p>
         </div>
       </template>
-      <template v-if="$PlatformPlugin.platform == 'Audius'" v-for="track in SearchResults" :key="SearchText.value">
+      <template v-if="platform == 'Audius'" v-for="track in SearchResults" :key="SearchText.value">
         <div @click="playSongOnClick(track.id)">
           <p style="color: aliceblue;">{{ track.title }}</p>
         </div>
@@ -37,9 +37,10 @@
 </template>
 
 <script setup lang="ts">
+
 //import PlatformPlugin from '~/plugins/PlatformPlugin';
 
-const { $AudiusPlayer, $deviceID, $PlatformPlugin } = useNuxtApp();
+const { $AudiusPlayer, $deviceID, $PlatformPlugin, $spotifyPlayer } = useNuxtApp();
 const accessToken = useCookie('spotify_access_token')
 const device_id = useCookie('spotifyDeviceID');
 let typingTimer: any;
@@ -47,7 +48,7 @@ const doneTypingInterval = 1000;
 const SearchText = ref();
 const SearchResults = ref();
 const isSearching = ref(false);
-//const platform = ref("Audius");
+const platform = ref("Spotify");
 
 const host = await $fetch('/api/audius/host/', {
   method: 'POST'
@@ -89,13 +90,19 @@ async function SearchFromInput(searchQuery: string, searchType: string, platform
 function playSongOnClick(id: string) {
   switch ($PlatformPlugin.platform) {
     case "Spotify":
+    if(!$AudiusPlayer.isPlaying.value){
+                    $AudiusPlayer.togglePlay();
+                }
       playSongOnSpotify(id)
-      //console.log("test")
+      $PlatformPlugin.platform = platform.value;
       break;
 
     case "Audius":
+    if(!$spotifyPlayer.paused.value){
+                    $spotifyPlayer.togglePlay();
+                }
       $AudiusPlayer.StreamSong(id)
-      //MainPlayer.SetMusicService("Audius")
+      $PlatformPlugin.platform = platform.value;
       break;
     default:
       break;
