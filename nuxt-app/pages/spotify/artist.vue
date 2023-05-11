@@ -48,7 +48,7 @@ const route = useRoute()
 // Gets the acess token
 const accessToken = useCookie('spotify_access_token')
 // gets the spotify plugin
-const { $deviceID } = useNuxtApp();
+const { $deviceID, $AudiusPlayer, $spotifyPlayer, $PlatformPlugin } = useNuxtApp();
 const artistData = ref();
 const artistTopSongs = ref();
 const query = ref(route.query.id)
@@ -84,7 +84,6 @@ artistData.value = await getArtist(query.value);
 artistTopSongs.value = await getArtistTopSongs(query.value);
 
 async function playArtistTopSongs(songId: string, topSongsArray) {
-
     let ids = [];
     topSongsArray.tracks.forEach((element: string) => {
         ids.push(`spotify:track:${element.id}`)
@@ -102,6 +101,10 @@ async function playArtistTopSongs(songId: string, topSongsArray) {
             }
         })
     });
+    $PlatformPlugin.platform = "Spotify";
+    if(!$AudiusPlayer.isPlaying.value) {
+        $AudiusPlayer.togglePlay();
+    }
 }
 
 

@@ -20,7 +20,7 @@
         </div>
       </template>
       <template v-if="platform == 'Audius'" v-for="track in SearchResults" :key="SearchText.value">
-        <div @click="playSongOnClick(track.id)">
+        <div @click="playSongOnClick(track.id, track.title)">
           <p style="color: aliceblue;">{{ track.title }}</p>
         </div>
       </template>
@@ -87,7 +87,7 @@ async function SearchFromInput(searchQuery: string, searchType: string, platform
 
 }
 
-function playSongOnClick(id: string) {
+function playSongOnClick(id: string, name: string = "") {
   switch (platform.value) {
     case "Spotify":
       if (!$AudiusPlayer.isPlaying.value) {
@@ -101,7 +101,7 @@ function playSongOnClick(id: string) {
       if (!$spotifyPlayer.paused.value) {
         $spotifyPlayer.togglePlay();
       }
-      $AudiusPlayer.StreamSong(id)
+      $AudiusPlayer.StreamSong(id, name)
       $PlatformPlugin.platform = platform.value;
       break;
     default:

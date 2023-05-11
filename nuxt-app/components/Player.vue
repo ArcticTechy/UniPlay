@@ -67,10 +67,10 @@
                 </div>
                 <!-- Add class pressed to show all buttons at once -->
                 <div class="platforms">
-                    <button id="Spotify" :class="{ activePlatform: MainPlayer.GetMusicService == 'Spotify' }">
+                    <button id="Spotify" :class="{ activePlatform: $PlatformPlugin.platform == 'Spotify' }">
                         <font-awesome-icon icon="fa-brands fa-spotify" style="font-size: 2.8em; color: #1DB954;" />
                     </button>
-                    <button id="Audius" :class="{ activePlatform: MainPlayer.GetMusicService == 'Audius' }">
+                    <button id="Audius" :class="{ activePlatform: $PlatformPlugin.platform == 'Audius' }">
                         <img src="~/assets/audius/Glyph_White.svg">
                     </button>
                 </div>
@@ -105,7 +105,7 @@ class Player {
                 break;
             case "Audius":
                 // togglePlay Function here
-                return "Not implemented";
+                return $AudiusPlayer.name.value;
                 break;
             case "none":
                 return "Nothings playing";
@@ -121,7 +121,7 @@ class Player {
                 break;
             case "Audius":
                 // togglePlay Function here
-                return "Not implemented";
+                return $AudiusPlayer.albumImage.value;
                 break;
             case "none":
                 return "https://cdn3.iconfinder.com/data/icons/pyconic-icons-3-1/512/cd-512.png";
@@ -163,8 +163,7 @@ class Player {
                 break;
             case "Audius":
                 // togglePlay Function here
-                return artist
-                break;
+                return [{name: $AudiusPlayer.artists.value[0], uri: "", id: ""}]
             case "none":
                 return artist
                 break;
@@ -354,13 +353,14 @@ class Player {
     }
 }
 
-const MainPlayer = new Player("Spotify")
+const MainPlayer = new Player("Audius")
 
 
 // Laver et interval på 1s vi bruger det til at updatere process linjen & spotifys postion without called the sdk all the time
 setInterval(() => {
     updateSpotifyPosition()
     PlayerProgressInProcent()
+    console.log($AudiusPlayer.duration.value)
     $spotifyPlayer.getVolume().then((v: any) => {
         spotifyVolume.value = v;
     })
