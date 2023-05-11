@@ -11,7 +11,7 @@ function getRandomString(length) {
 export default defineEventHandler(async (event) => {
     // gets our ClientID and spotifyRedirect link from our .env (If you don't have one make one it does not sync with github for safty)
     const { spotifyClientID, spotifyRedirect } = useRuntimeConfig();
-    // crates a state values using our string generator this allows us to check that we have the corrent user later in the process
+    // creates a state values using our string generator this allows us to check that we have the corrent user later in the process
     // in other words safty
     const state = getRandomString(16);
     // crates a scope the scope tells spotify what we want to control and we choose everything because of the nature of the app

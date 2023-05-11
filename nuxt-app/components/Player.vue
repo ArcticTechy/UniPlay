@@ -1,86 +1,86 @@
 <template>
-    <div class="bg-container">
-        <div class="temp" :style="{ backgroundImage: `url('${MainPlayer.currentTrackImage}')` }">
-    </div>
-    </div>
-    <div class="Player-container">
-        <div class="left">
-            <img v-bind:src="MainPlayer.currentTrackImage">
-            <div class="grid-stack">
-                <h1 id="Song-title">{{ MainPlayer.songTitle }}</h1>
-                <div class="artits">
-                    <!-- prints names of the artites that are in the song uses class artists to design -->
-                    <template v-for="(item, index) in MainPlayer.artists">
-                        <NuxtLink class="artist" v-if="index == MainPlayer.artists.length - 1" to="/">
-                            {{
-                                item.name
-                            }} </NuxtLink>
-                        <NuxtLink class="artist" v-if="index != MainPlayer.artists.length - 1" to="/">
-                            {{
-                                item.name
-                            }}, </NuxtLink>
-                    </template>
+    <ClientOnly>
+        <div class="bg-container">
+            <div class="temp" :style="{ backgroundImage: `url('${MainPlayer.currentTrackImage}')` }">
+            </div>
+        </div>
+        <div class="Player-container">
+            <div class="left">
+                <img v-bind:src="MainPlayer.currentTrackImage">
+                <div class="grid-stack">
+                    <h1 id="Song-title">{{ MainPlayer.songTitle }}</h1>
+                    <div class="artits">
+                        <!-- prints names of the artites that are in the song uses class artists to design -->
+                        <template v-for="(item, index) in MainPlayer.artists">
+                            <NuxtLink class="artist" v-if="index == MainPlayer.artists.length - 1"
+                                :to="`/spotify/artist?id=${item.id.value}`">
+                                {{
+                                    item.name
+                                }} </NuxtLink>
+                            <NuxtLink class="artist" v-if="index != MainPlayer.artists.length - 1"
+                                :to="`/spotify/artist?id=${item.id.value}`">
+                                {{
+                                    item.name
+                                }}, </NuxtLink>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div class="middle">
+                <div>
+                    <button id="shuffle">
+                        <font-awesome-icon icon="fa-solid fa-shuffle" style="color: #ffffff; font-size: 20px;" />
+                    </button>
+                    <button id="prevSong" @click="MainPlayer.prevSong()">
+                        <font-awesome-icon icon="fa-solid fa-forward-step"
+                            style="color: #ffffff; font-size: 25px; transform: rotate(180deg);" />
+                    </button>
+                    <button id="pause-play" @click="MainPlayer.togglePlay()">
+                        <font-awesome-icon v-if="MainPlayer.isplaying" icon="fa-solid fa-play" style=" font-size: 30px;" />
+                        <font-awesome-icon v-else icon="fa-solid fa-pause" style=" font-size: 30px;" />
+                    </button>
+                    <button id="nextSong" @click="MainPlayer.nextSong()">
+                        <font-awesome-icon icon="fa-solid fa-forward-step" style="color: #ffffff; font-size: 25px;" />
+                    </button>
+                    <button id="repeat">
+                        <font-awesome-icon icon="fa-solid fa-repeat" style="color: #ffffff; font-size: 20px;" />
+                    </button>
+                </div>
+                <div>
+                    <p class="durationTime">{{ MainPlayer.position.hours.value }}:{{ MainPlayer.position.minutes.value }}:{{
+                        MainPlayer.position.seconds.value }}</p>
+                    <input v-model="progressBar" @input="moveGraditentOnInput" @change="MainPlayer.seekPosition"
+                        :style="rangeStyle" id="playerProgress" type="range" min="0" :max="MainPlayer.duration.value.value">
+                    <p class="durationTime">{{ MainPlayer.duration.hours.value }}:{{ MainPlayer.duration.minutes.value }}:{{
+                        MainPlayer.duration.seconds.value }}</p>
+                </div>
+            </div>
+            <div class="right">
+                <div class="volumeControl pressed">
+                    <button>
+                        <font-awesome-icon icon="fa-solid fa-volume-low" style="font-size: 1.4em; color: #ffffff;" />
+                    </button>
+                    <input type="range" @input="MainPlayer.setVolume">
+                    <button>
+                        <font-awesome-icon icon="fa-solid fa-volume-high" style="font-size: 1.4em; color: #ffffff;" />
+                    </button>
+                </div>
+                <!-- Add class pressed to show all buttons at once -->
+                <div class="platforms">
+                    <button id="Spotify" :class="{ activePlatform: $PlatformPlugin.platform == 'Spotify' }">
+                        <font-awesome-icon icon="fa-brands fa-spotify" style="font-size: 2.8em; color: #1DB954;" />
+                    </button>
+                    <button id="Audius" :class="{ activePlatform: $PlatformPlugin.platform == 'Audius' }">
+                        <img src="~/assets/audius/Glyph_White.svg">
+                    </button>
                 </div>
             </div>
         </div>
-        <div class="middle">
-            <div>
-                <button id="shuffle">
-                    <font-awesome-icon icon="fa-solid fa-shuffle" style="color: #ffffff; font-size: 20px;" />
-                </button>
-                <button id="prevSong" @click="MainPlayer.prevSong()">
-                    <font-awesome-icon icon="fa-solid fa-forward-step"
-                        style="color: #ffffff; font-size: 25px; transform: rotate(180deg);" />
-                </button>
-                <button id="pause-play" @click="MainPlayer.togglePlay()">
-                    <font-awesome-icon v-if="$spotifyPlayer.paused.value" icon="fa-solid fa-play"
-                        style=" font-size: 30px;" />
-                    <font-awesome-icon v-else icon="fa-solid fa-pause" style=" font-size: 30px;" />
-                </button>
-                <button id="nextSong" @click="MainPlayer.nextSong()">
-                    <font-awesome-icon icon="fa-solid fa-forward-step" style="color: #ffffff; font-size: 25px;" />
-                </button>
-                <button id="repeat">
-                    <font-awesome-icon icon="fa-solid fa-repeat" style="color: #ffffff; font-size: 20px;" />
-                </button>
-            </div>
-            <div>
-                <p class="durationTime">{{ MainPlayer.position.hours.value }}:{{ MainPlayer.position.minutes.value }}:{{
-                    MainPlayer.position.seconds.value }}</p>
-                <input v-model="progressBar" @input="moveGraditentOnInput" @change="MainPlayer.seekPosition"
-                    :style="rangeStyle" id="playerProgress" type="range" min="0" :max="MainPlayer.duration.value.value">
-                <p class="durationTime">{{ MainPlayer.duration.hours.value }}:{{ MainPlayer.duration.minutes.value }}:{{
-                    MainPlayer.duration.seconds.value }}</p>
-            </div>
-        </div>
-        <div class="right">
-            <div class="volumeControl pressed">
-                <button>
-                    <font-awesome-icon icon="fa-solid fa-volume-low" style="font-size: 1.4em; color: #ffffff;" />
-                </button>
-                <input type="range" @input="MainPlayer.setVolume">
-                <button>
-                    <font-awesome-icon icon="fa-solid fa-volume-high" style="font-size: 1.4em; color: #ffffff;" />
-                </button>
-            </div>
-            <!-- Add class pressed to show all buttons at once -->
-            <div class="platforms">
-                <button id="Spotify" :class="{ activePlatform: MainPlayer.GetMusicService == 'Spotify' }">
-                    <font-awesome-icon icon="fa-brands fa-spotify" style="font-size: 2.8em; color: #1DB954;" />
-                </button>
-                <button id="Audius" :class="{ activePlatform: MainPlayer.GetMusicService == 'Audius' }">
-                    <img src="~/assets/audius/Glyph_White.svg">
-                </button>
-            </div>
-        </div>
-    </div>
+    </ClientOnly>
 </template>
 
 <script setup lang="ts">
-import { ChangeEvent } from 'rollup';
-import { InputObject } from 'untyped';
-const { $spotifyPlayer } = useNuxtApp();
-
+const { $spotifyPlayer, $AudiusPlayer, $PlatformPlugin } = useNuxtApp();
 //Update spotify vol once a sec to stay in sync
 const spotifyVolume = ref(0)
 
@@ -99,13 +99,13 @@ class Player {
         return this.cms;
     }
     get songTitle(): string {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 return $spotifyPlayer.current_track.value.name;
                 break;
             case "Audius":
                 // togglePlay Function here
-                return "Not implemented";
+                return $AudiusPlayer.name.value;
                 break;
             case "none":
                 return "Nothings playing";
@@ -115,13 +115,13 @@ class Player {
         }
     }
     get currentTrackImage() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 return $spotifyPlayer.current_track.value.album.images[0].url;
                 break;
             case "Audius":
                 // togglePlay Function here
-                return "Not implemented";
+                return $AudiusPlayer.albumImage.value;
                 break;
             case "none":
                 return "https://cdn3.iconfinder.com/data/icons/pyconic-icons-3-1/512/cd-512.png";
@@ -130,22 +130,40 @@ class Player {
                 return "https://cdn3.iconfinder.com/data/icons/pyconic-icons-3-1/512/cd-512.png";
         }
     }
+    get isplaying() {
+        switch ($PlatformPlugin.platform) {
+            case "Spotify":
+                return $spotifyPlayer.paused.value;
+                break;
+            case "Audius":
+                return $AudiusPlayer.isPlaying.value;
+                break;
+            case "none":
+                return false;
+                break;
+            default:
+                return false;
+        }
+    }
+
     get artists() {
-        let artist: { name: string; uri: string; }[] = []
-        switch (this.cms) {
+        let artist: { name: string; uri: string; id: any; }[] = []
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 $spotifyPlayer.current_track.value.artists.forEach(element => {
                     artist.push({
                         name: element.name,
-                        uri: element.uri
+                        uri: element.uri,
+                        id: computed(() => {
+                            return element.uri.slice(element.uri.lastIndexOf(":") + 1);
+                        })
                     })
                 })
                 return artist
                 break;
             case "Audius":
                 // togglePlay Function here
-                return artist
-                break;
+                return [{name: $AudiusPlayer.artists.value[0], uri: "", id: ""}]
             case "none":
                 return artist
                 break;
@@ -154,7 +172,7 @@ class Player {
         }
     }
     get position() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case 'Spotify':
                 return {
                     value: computed(() => Number(spotifyUpdaingPos.value)),
@@ -172,12 +190,20 @@ class Player {
                     })
                 };
             case 'Audius':
-                // togglePlay Function here
-                return {
-                    value: computed(() => 0),
-                    hours: computed(() => 0),
-                    minutes: computed(() => 0),
-                    seconds: computed(() => 0)
+            return {
+                    value: computed(() => Number($AudiusPlayer.position.value)),
+                    hours: computed(() => {
+                        const hours = Math.floor($AudiusPlayer.position.value / 3600);
+                        return hours < 10 ? '0' + hours : hours.toString();
+                    }),
+                    minutes: computed(() => {
+                        const minutes = Math.floor(($AudiusPlayer.position.value % 3600) / 60);
+                        return minutes < 10 ? '0' + minutes : minutes.toString();
+                    }),
+                    seconds: computed(() => {
+                        const seconds = Math.floor($AudiusPlayer.position.value % 60);
+                        return seconds < 10 ? '0' + seconds : seconds.toString();
+                    })
                 };
             case 'none':
                 return {
@@ -196,7 +222,7 @@ class Player {
         }
     }
     get duration() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case 'Spotify':
                 return {
                     value: computed(() => Number($spotifyPlayer.duration.value)),
@@ -214,12 +240,20 @@ class Player {
                     })
                 };
             case 'Audius':
-                // togglePlay Function here
                 return {
-                    value: computed(() => 0),
-                    hours: computed(() => 0),
-                    minutes: computed(() => 0),
-                    seconds: computed(() => 0)
+                    value: computed(() => Number($AudiusPlayer.duration.value)),
+                    hours: computed(() => {
+                        const hours = Math.floor(Number($AudiusPlayer.duration.value) / 3600);
+                        return hours < 10 ? '0' + hours : hours.toString();
+                    }),
+                    minutes: computed(() => {
+                        const minutes = Math.floor((Number($AudiusPlayer.duration.value) % 3600) / 60);
+                        return minutes < 10 ? '0' + minutes : minutes.toString();
+                    }),
+                    seconds: computed(() => {
+                        const seconds = Math.floor(Number($AudiusPlayer.duration.value) % 60);
+                        return seconds < 10 ? '0' + seconds : seconds.toString();
+                    })
                 };
             case 'none':
                 return {
@@ -238,7 +272,7 @@ class Player {
         }
     }
     get currentVolume(): number {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 return spotifyVolume.value;
                 break;
@@ -256,12 +290,18 @@ class Player {
 
 
     togglePlay() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
-                $spotifyPlayer.togglePlay()
+                if(!$AudiusPlayer.isPlaying.value){
+                    $AudiusPlayer.togglePlay();
+                }
+                $spotifyPlayer.togglePlay();
                 break;
             case "Audius":
-                // togglePlay Function here
+            if(!$spotifyPlayer.paused.value){
+                    $spotifyPlayer.togglePlay();
+                }
+                $AudiusPlayer.togglePlay();
                 break;
             case "none":
                 console.log("No service playing")
@@ -269,7 +309,7 @@ class Player {
         }
     }
     nextSong() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 $spotifyPlayer.nextTrack()
                 break;
@@ -282,7 +322,7 @@ class Player {
         }
     }
     prevSong() {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 $spotifyPlayer.previousTrack()
                 break;
@@ -295,12 +335,12 @@ class Player {
         }
     }
     seekPosition(e: Event) {
-        switch (this.cms) {
+        switch ($PlatformPlugin.platform) {
             case "Spotify":
                 $spotifyPlayer.seek((e.target as HTMLInputElement).value)
                 break;
             case "Audius":
-                // togglePlay Function here
+                $AudiusPlayer.seek((e.target as HTMLInputElement).value)
                 break;
             case "none":
                 console.log("No service playing")
@@ -308,18 +348,20 @@ class Player {
         }
     }
     setVolume(e: Event) {
+        $AudiusPlayer.setVolume((Number((e.target as HTMLInputElement).value) / 100))
         $spotifyPlayer.setVolume((Number((e.target as HTMLInputElement).value) / 100))
     }
-
 }
 
-const MainPlayer = new Player("Spotify")
+const MainPlayer = new Player("Audius")
+
 
 // Laver et interval på 1s vi bruger det til at updatere process linjen & spotifys postion without called the sdk all the time
 setInterval(() => {
     updateSpotifyPosition()
     PlayerProgressInProcent()
-    $spotifyPlayer.getVolume().then(v => {
+    console.log($AudiusPlayer.duration.value)
+    $spotifyPlayer.getVolume().then((v: any) => {
         spotifyVolume.value = v;
     })
 }, 1000)
@@ -364,6 +406,7 @@ const rangeStyle = computed(() => ({
     z-index: -1;
     overflow: hidden;
 }
+
 .temp {
     width: 120%;
     height: 120%;
@@ -371,6 +414,7 @@ const rangeStyle = computed(() => ({
     margin-left: -120px;
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
     filter: blur(10px);
     -webkit-filter: blur(10px);
     background-color: rebeccapurple;
@@ -381,7 +425,9 @@ const rangeStyle = computed(() => ({
     position: absolute;
     bottom: 0;
     width: 100%;
+    height: 100%;
     left: 0;
+    z-index: 4;
     display: flex;
     flex-basis: 100%;
     align-items: center;
@@ -398,7 +444,7 @@ const rangeStyle = computed(() => ({
 .left {
     display: flex;
     align-items: center;
-    height: 6em;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -442,7 +488,7 @@ const rangeStyle = computed(() => ({
 
 /* style for middle element */
 .middle {
-    height: 6em;
+    height: 100%;
     overflow: hidden;
     display: grid;
     grid-template-rows: 2fr 1fr;
@@ -522,6 +568,7 @@ const rangeStyle = computed(() => ({
     display: flex;
     justify-content: right;
     margin-left: auto;
+    height: 100%;
 }
 
 .right .volumeControl {
@@ -579,4 +626,5 @@ const rangeStyle = computed(() => ({
     flex-direction: column;
     width: 5em;
     z-index: -1;
-}</style>
+}
+</style>
